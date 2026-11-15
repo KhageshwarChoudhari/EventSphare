@@ -1,8 +1,17 @@
-import { Route, Routes } from "react-router"
+import { Route, Routes, useLocation } from "react-router"
 import Navbar from "./components/common/Navbar"
 import Footer from "./components/common/Footer"
 import HomePage from "./pages/HomePage"
 import NotFoundPage from "./pages/NotFoundPage"
+import { useEffect } from "react"
+
+
+function ScrollonTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({top: 0 , left: 0});
+  }, [pathname]);
+}
 
 
 
@@ -11,6 +20,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F5] text-stone-900 selection:bg-orange-100 selection:text-[#E65100]">
+      <ScrollonTop />
       <Navbar />
      <div className="flex-1">
       <Routes>
