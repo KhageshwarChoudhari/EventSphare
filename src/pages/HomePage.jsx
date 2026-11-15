@@ -14,7 +14,7 @@ useEffect(() => {
   async function fetchFeaturedEvents() {
     try {
       const { data: { data } } = await axios.get(
-        "https://eventsphere-server-mfdb.onrender.com/api/events/featured"
+        `https://eventsphere-server-mfdb.onrender.com/api/events/featured`
       );
 
       setFeaturedEvents(data);
