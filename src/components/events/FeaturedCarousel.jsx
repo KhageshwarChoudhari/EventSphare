@@ -14,7 +14,7 @@ import {
 import { Link } from "react-router";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { formatEventDate, formatPrice } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/lib/utils";
 
 
 function FeaturedCarousel({ events }) {
@@ -104,7 +104,7 @@ function FeaturedCarousel({ events }) {
                                         <div className="flex items-center gap-5 pt-2 text-xs sm:text-sm text-stone-300 font-medium flex-wrap">
                                             <span className="flex items-center gap-1.5 text-orange-300 font-semibold">
                                                 <Calendar className="w-4 h-4" />
-                                                {formatEventDate(event.startDate)}
+                                                {formatDate(event.startDate)}
                                             </span>
                                             <span className="flex items-center gap-1.5 text-stone-300">
                                                 <MapPin className="w-4 h-4 text-stone-400" />

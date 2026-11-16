@@ -14,7 +14,7 @@ export function formatPrice(amount , currency = "INR") {
 }
 
 
-export function formatEventDate(dateInput) {
+export function formatDate(dateInput) {
     const date = parseISO(dateInput);
     return format(date, "E, LLL dd, yyyy");
 }
