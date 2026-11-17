@@ -4,6 +4,7 @@ import Footer from "./components/common/Footer"
 import HomePage from "./pages/HomePage"
 import NotFoundPage from "./pages/NotFoundPage"
 import { useEffect } from "react"
+import EventDetailsPage from "./pages/EventDetailsPage"
 
 
 function ScrollonTop() {
@@ -25,6 +26,7 @@ function App() {
      <div className="flex-1">
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path={`/events/:slug`} element={<EventDetailsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
      </div>

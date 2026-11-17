@@ -1,3 +1,4 @@
+import Skeleton from "@/components/common/Skeleton";
 import EventCard from "@/components/events/EventsCard";
 import FeaturedCarousel from "@/components/events/FeaturedCarousel";
 import { Button } from "@/components/ui/button";
@@ -103,7 +104,7 @@ export default function HomePage() {
   const [trendingEvents, setTrendingEvents] = useState([]);
 
   useEffect(() => {
-    async function loadHomepage(API) {
+  async function loadHomepage(API) {
       try {
         const { data: { data } } = await axios.get(API);
         if (API === featuredAPI) {
@@ -114,7 +115,7 @@ export default function HomePage() {
           setTrendingEvents(data);
         }
       } catch (error) {
-        console.error(`Error fetching data from ${API}:`, error);
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -124,9 +125,6 @@ export default function HomePage() {
     loadHomepage(spotlightAPI);
 
   }, []);
-
-
-
 
   return (
     <div className="space-y-16 pb-20">
@@ -273,21 +271,24 @@ export default function HomePage() {
             className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-xs rounded-lg font-medium border border-[#CCC8BA] bg-transparent hover:bg-[#F2F1EC] text-[#222]"
           >
             <span>View All Events</span>
-            <ArrowRight/>
+            <ArrowRight />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-          {
-            trendingEvents.map((event) => (
-              <EventCard key={event._id} event={event} />
-            ))
-          }
+        {isLoading ? (
+          < div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (<Skeleton key={i} />))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {trendingEvents.map((e) => {
+              return <EventCard key={e._id} event={e} />;
+            })}
+          </div>
+        )}
 
-
-        </div>
-      </section>
+      </section >
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
         <div>
@@ -353,6 +354,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </div>
+    </div >
   );
 }
