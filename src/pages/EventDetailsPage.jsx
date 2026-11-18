@@ -1,39 +1,43 @@
-import { formatDate, formatPrice } from "@/lib/utils";
-import axios from "axios";
-import { Bookmark, Calendar, Clock, MapPin, Share2, Sparkles } from "lucide-react";
+import EventReviewSection from "@/components/events/EventReviewSection";
+import api from "@/lib/axios";
+import { caluRemDay, formatDate, formatPrice, formatTime } from "@/lib/utils";
+
+import { Bookmark, Calendar, Check, ChevronLeft, Clock, MapPin, Share2, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
+import { toast } from "sonner";
 
 
 
 export default function EventDetailsPage() {
 
+  function handleShare() {
+    navigator.clipboard.writeText(window.location.href)
+    toast.success("Event link copied to clipboard!")
+  }
 
-
-  const { slug } = useParams();
-
-  const eventDetailAPI = `https://eventsphere-server-mfdb.onrender.com/api/events/${slug}`
+  const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
   const [eventsDetails, setEventsDetails] = useState([]);
-  // const [categories, setCategories] = useState([]);
-  // const [trendingEvents, setTrendingEvents] = useState([]);
-  console.log(eventsDetails);
+  const [reviews, setReviews] = useState([]);
+
+  // console.log(eventsDetails);
+  // console.log(reviews);
   const e = eventsDetails
   useEffect(() => {
+
+    const eventDetailAPI = `/api/events/${id}`
+    const reviewsAPI = `/api/events/${id}/reviews`
+
     async function fetchEventDetails(API) {
       try {
-        const { data: { data } } = await axios.get(API);
-
+        const data = await api.get(API);
         if (API === eventDetailAPI) {
           setEventsDetails(data);
+        } else if (API === reviewsAPI) {
+          setReviews(data);
         }
-        //  else if (API === categoriesAPI) {
-        //   setCategories(data);
-        // } 
-        // else if (API === spotlightAPI) {
-        //   setTrendingEvents(data);
-        // }
       } catch (error) {
         console.error(error);
       } finally {
@@ -41,8 +45,8 @@ export default function EventDetailsPage() {
       }
     }
     fetchEventDetails(eventDetailAPI);
-    // fetchEventDetails(eventDetailAPI);
-    // fetchEventDetails(eventDetailAPI);
+    fetchEventDetails(reviewsAPI);
+
   }, []);
 
 
@@ -62,7 +66,6 @@ export default function EventDetailsPage() {
       </div>
     );
   }
-console.log(e);
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-24">
       <div className="flex items-center justify-between">
@@ -70,16 +73,17 @@ console.log(e);
           to="/explore"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 transition-colors"
         >
-          <span>‹</span>
+          <span><ChevronLeft className="w-3.5 h-3.5" /></span>
           <span>Back to Explore</span>
         </Link>
 
         <div className="flex items-center gap-2">
           <button
+            onClick={handleShare}
             type="button"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#DDD9CE] bg-white hover:bg-stone-50 text-xs font-medium text-stone-700 transition-all cursor-pointer"
           >
-            <span><Share2 className="w-4 h-4"/></span>
+            <span><Share2 className="w-4 h-4" /></span>
             <span>Share</span>
           </button>
 
@@ -87,7 +91,7 @@ console.log(e);
             type="button"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
           >
-            <Bookmark className="w-4 h-4"/>
+            <Bookmark className="w-4 h-4" />
             <span>Save</span>
           </button>
         </div>
@@ -113,7 +117,7 @@ console.log(e);
                 : e.format === "in-person"
                   ? "In-Person Gathering"
                   : "Hybird Format"}
-           
+
             </span>
             {e.featured && (<span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#FFF3E0] text-[#B73E00] border border-[#FFE0B2] text-xs px-2.5 py-1 rounded-full font-medium">
               <Sparkles className="w-3 h-3" /> Featured Pick
@@ -130,7 +134,7 @@ console.log(e);
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <span><Clock className="w-4 h-4"/></span> 09:30 AM – 06:00 PM IST
+              <span><Clock className="w-4 h-4" /></span> {formatTime(e?.startDate, e?.endDate)}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
@@ -217,105 +221,8 @@ console.log(e);
           </section>
 
           {/* Reviews section */}
-          <section className="bg-white rounded-3xl border border-[#EBE8DF] p-6 sm:p-8 shadow-subtle space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#F2EFE8]">
-              <div>
-                <h3 className="text-xl font-bold text-[#111]">Attendee Reviews & Experiences</h3>
-                <p className="text-xs text-stone-500 mt-0.5">
-                  Real feedback from community members who joined this event
-                </p>
-              </div>
+          <EventReviewSection reviews={reviews} event={eventsDetails} />
 
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 text-[#E65100]">
-                  <span className="text-amber-500 text-lg">⭐</span>
-                  <span className="text-lg font-black text-stone-900">
-                    4.9
-                  </span>
-                </div>
-                <span className="text-xs text-stone-400 font-medium">
-                  (3 reviews)
-                </span>
-              </div>
-            </div>
-
-            {/* Review Submission Form */}
-            <form className="bg-[#FAF9F5] rounded-2xl p-4 sm:p-5 border border-[#EAE7DC] space-y-4">
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <span className="text-xs font-bold text-stone-800">Rate your experience:</span>
-                <div className="flex items-center gap-1 text-base text-amber-500 cursor-pointer">
-                  <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
-                  <span className="text-xs font-bold text-stone-700 ml-1.5">
-                    5 / 5
-                  </span>
-                </div>
-              </div>
-
-              <textarea
-                rows={3}
-                name="comment"
-                placeholder="Share how the venue, speakers, curation, or atmosphere resonated with you..."
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-white border border-[#DDD9CE] focus:border-[#E65100] outline-none text-stone-800"
-              />
-
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-xs font-medium px-3 py-1.5 bg-[#E65100] text-white hover:bg-[#D84315] shadow-sm"
-                >
-                  <span>✉️</span>
-                  <span>Post Review</span>
-                </button>
-              </div>
-            </form>
-
-            {/* Reviews List */}
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-white border border-[#F0ECE2] space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                      alt="Pooja Sharma"
-                      className="w-7 h-7 rounded-full object-cover border border-[#DDD9CE]"
-                    />
-                    <div>
-                      <p className="text-xs font-bold text-stone-900 leading-none">Pooja Sharma</p>
-                      <p className="text-[10px] text-stone-400 mt-0.5">2 days ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-0.5 text-xs text-amber-400">
-                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                  </div>
-                </div>
-                <p className="text-xs text-stone-700 leading-relaxed pl-9">
-                  Exceptional architectural discussions on React Server Components! The live demos brought rare clarity.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#F0ECE2] space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
-                      alt="Aditya Menon"
-                      className="w-7 h-7 rounded-full object-cover border border-[#DDD9CE]"
-                    />
-                    <div>
-                      <p className="text-xs font-bold text-stone-900 leading-none">Aditya Menon</p>
-                      <p className="text-[10px] text-stone-400 mt-0.5">5 days ago</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-0.5 text-xs text-amber-400">
-                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                  </div>
-                </div>
-                <p className="text-xs text-stone-700 leading-relaxed pl-9">
-                  The venue at BIC Domlur was immaculate, sound engineering was spot on, and connecting with peers was invaluable.
-                </p>
-              </div>
-            </div>
-          </section>
         </div>
 
         {/* Right Column: Sticky Booking Ticket Card */}
@@ -333,7 +240,7 @@ console.log(e);
 
               <div className="text-right">
                 <span className="text-xs font-semibold px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">
-                  11 days left
+                  {caluRemDay(e?.startDate)}
                 </span>
               </div>
             </div>
@@ -342,19 +249,21 @@ console.log(e);
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-stone-600">
                 <span className="flex items-center gap-1.5 font-medium">
-                  <span>👥</span> Capacity
+                  <span><Users className="w-4 h-4" /></span> Capacity
                 </span>
                 <span className="font-bold text-stone-900">
-                  85 of 100 seats filled
+                  {` ${e?.registeredCount} of ${e?.capacity} seats filled`}
                 </span>
               </div>
               <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#E65100] rounded-full transition-all w-[80%]"
+                  className="h-full bg-[#E65100] rounded-full transition-all" style={{
+                    width: `${Math.round((e?.registeredCount / e?.capacity) * 100)}%`
+                  }}
                 />
               </div>
               <p className="text-[11px] text-stone-400 text-right">
-                15 seats remaining
+                {`${e?.capacity - e?.registeredCount} seats remaining`}
               </p>
             </div>
 
@@ -378,11 +287,11 @@ console.log(e);
             {/* Trust points */}
             <div className="pt-4 border-t border-[#F2EFE8] space-y-2 text-[11px] text-stone-500">
               <div className="flex items-center gap-2">
-                <span className="text-emerald-600">🛡️</span>
+                <span className="text-emerald-600"><ShieldCheck className="w-4 h-4" /></span>
                 <span>Verified organizer & authentic attendee review policy</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-stone-400">✓</span>
+                <span className="text-stone-400"><Check className="w-4 h-4" /></span>
                 <span>Digital ticket QR sent to your email instantly</span>
               </div>
             </div>

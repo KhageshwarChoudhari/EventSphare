@@ -2,7 +2,7 @@ import Skeleton from "@/components/common/Skeleton";
 import EventCard from "@/components/events/EventsCard";
 import FeaturedCarousel from "@/components/events/FeaturedCarousel";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import api from "@/lib/axios";
 import {
   ArrowRight,
   Briefcase,
@@ -93,9 +93,9 @@ const HUB_CITIES = [
 ];
 
 export default function HomePage() {
-  const featuredAPI = "https://eventsphere-server-mfdb.onrender.com/api/events/featured"
-  const categoriesAPI = "https://eventsphere-server-mfdb.onrender.com/api/categories"
-  const spotlightAPI = "https://eventsphere-server-mfdb.onrender.com/api/events?limit=8&sort=startDate&order=asc"
+  const featuredAPI = "/api/events/featured"
+  const categoriesAPI = "/api/categories"
+  const spotlightAPI = "/api/events?limit=8&sort=startDate&order=asc"
 
 
   const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +106,7 @@ export default function HomePage() {
   useEffect(() => {
   async function loadHomepage(API) {
       try {
-        const { data: { data } } = await axios.get(API);
+        const data = await api.get(API);
         if (API === featuredAPI) {
           setFeaturedEvents(data);
         } else if (API === categoriesAPI) {

@@ -14,11 +14,12 @@ export default function EventCard({event}) {
     title,
     image,
     slug,
+    
     category :{name}
   } = event;
   return (
     <Link
-      to={`/events/${slug}`}
+      to={`/events/${id}`}
       className="group bg-white rounded-2xl border border-[#EAE7DC] overflow-hidden flex flex-col justify-between shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.08)] hover:border-[#D5D0C2] hover:-translate-y-0.5 transition-all duration-300"
     >
       <div>

@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage"
 import NotFoundPage from "./pages/NotFoundPage"
 import { useEffect } from "react"
 import EventDetailsPage from "./pages/EventDetailsPage"
+import { Toaster } from "sonner"
 
 
 function ScrollonTop() {
@@ -26,11 +27,22 @@ function App() {
      <div className="flex-1">
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path={`/events/:slug`} element={<EventDetailsPage />} />
+        <Route path={`/events/:id`} element={<EventDetailsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
      </div>
       <Footer />
+       <Toaster
+        richColors
+        toastOptions={{
+          style: {
+            borderRadius: "1rem",
+            border: "1px solid #EBE8DF",
+            fontFamily: '"Plus Jakarta Sans", sans-serif',
+            fontSize: "13px",
+          },
+        }}
+      />
     </div>
   )
 }
