@@ -22,8 +22,6 @@ export default function EventDetailsPage() {
   const [eventsDetails, setEventsDetails] = useState([]);
   const [reviews, setReviews] = useState([]);
 
-  // console.log(eventsDetails);
-  // console.log(reviews);
   const e = eventsDetails
   useEffect(() => {
 
@@ -88,6 +86,7 @@ export default function EventDetailsPage() {
           </button>
 
           <button
+          // onClick={}
             type="button"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
           >

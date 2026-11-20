@@ -2,8 +2,6 @@ import { formatDistanceToNow, parseISO } from "date-fns";
 import { MessageSquare, Star } from "lucide-react";
 
 export default function EventReviewSection({ reviews, event }) {
-    console.log(reviews);
-    console.log(event);
     const isAuthenticated = false;
 
     return (
