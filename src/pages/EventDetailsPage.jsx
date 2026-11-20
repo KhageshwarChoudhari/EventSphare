@@ -1,9 +1,11 @@
 import EventReviewSection from "@/components/events/EventReviewSection";
+import { handelFavorites } from "@/components/events/EventsCard";
 import api from "@/lib/axios";
 import { caluRemDay, formatDate, formatPrice, formatTime } from "@/lib/utils";
 
 import { Bookmark, Calendar, Check, ChevronLeft, Clock, MapPin, Share2, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router";
 import { toast } from "sonner";
 
@@ -21,8 +23,13 @@ export default function EventDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [eventsDetails, setEventsDetails] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const Dispatch = useDispatch();
+  const isFavorite = useSelector((state) =>
+    state.favorites.items.some(
+      (e) => (e.id || e._id) === (eventsDetails.id || eventsDetails._id),
+    ),
+  );
 
-  const e = eventsDetails
   useEffect(() => {
 
     const eventDetailAPI = `/api/events/${id}`
@@ -86,12 +93,17 @@ export default function EventDetailsPage() {
           </button>
 
           <button
-          // onClick={}
+            onClick={(e) => handelFavorites(e, eventsDetails, Dispatch, isFavorite)}
             type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${isFavorite
+              ? "bg-orange-50 border-orange-200 text-[#f26c24fe]"
+              : "bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
+              }`}
           >
-            <Bookmark className="w-4 h-4" />
-            <span>Save</span>
+            <Bookmark
+              className={`w-3.5 h-3.5 ${isFavorite ? "fill-[#E65100]" : ""}`}
+            />
+            <span>{isFavorite ? "Saved" : "Save"}</span>
           </button>
         </div>
       </div>
@@ -99,8 +111,8 @@ export default function EventDetailsPage() {
       {/* Hero Banner Image */}
       <div className="relative rounded-3xl overflow-hidden aspect-16/8 max-h-115 shadow-subtle border border-[#EBE8DF]">
         <img
-          src={e?.image}
-          alt={e?.title}
+          src={eventsDetails?.image}
+          alt={eventsDetails?.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
@@ -108,36 +120,36 @@ export default function EventDetailsPage() {
         <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-black/60 backdrop-blur-md text-white border border-white/20 text-xs px-2.5 py-1 rounded-full font-medium">
-              {e?.category?.name}
+              {eventsDetails?.category?.name}
             </span>
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#EBF3ED] text-[#245436] border border-[#CFE2D4] text-xs px-2.5 py-1 rounded-full font-medium">
-              {e.format === "online"
+              {eventsDetails.format === "online"
                 ? "Online Conclave"
-                : e.format === "in-person"
+                : eventsDetails.format === "in-person"
                   ? "In-Person Gathering"
                   : "Hybird Format"}
 
             </span>
-            {e.featured && (<span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#FFF3E0] text-[#B73E00] border border-[#FFE0B2] text-xs px-2.5 py-1 rounded-full font-medium">
+            {eventsDetails.featured && (<span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#FFF3E0] text-[#B73E00] border border-[#FFE0B2] text-xs px-2.5 py-1 rounded-full font-medium">
               <Sparkles className="w-3 h-3" /> Featured Pick
             </span>)}
           </div>
 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            {e?.title}
+            {eventsDetails?.title}
           </h1>
 
           <div className="flex items-center gap-4 text-xs sm:text-sm text-stone-200 pt-1 flex-wrap font-medium">
             <span className="flex items-center gap-1 text-orange-300 font-semibold">
-              <Calendar className="w-4 h-4" /> {formatDate(e?.startDate)}
+              <Calendar className="w-4 h-4" /> {formatDate(eventsDetails?.startDate)}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <span><Clock className="w-4 h-4" /></span> {formatTime(e?.startDate, e?.endDate)}
+              <span><Clock className="w-4 h-4" /></span> {formatTime(eventsDetails?.startDate, eventsDetails?.endDate)}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" /> {`${e?.venue}, ${e?.city}`}
+              <MapPin className="w-4 h-4" /> {`${eventsDetails?.venue}, ${eventsDetails?.city}`}
             </span>
           </div>
         </div>
@@ -151,14 +163,14 @@ export default function EventDetailsPage() {
           <section className="bg-white rounded-3xl border border-[#EBE8DF] p-6 sm:p-8 shadow-subtle space-y-4">
             <h2 className="text-xl font-bold text-stone-900">About the Gathering</h2>
             <div className="text-sm text-stone-700 leading-relaxed space-y-4 whitespace-pre-line font-normal">
-              {e?.description}
+              {eventsDetails?.description}
             </div>
 
             {/* Tags */}
             <div className="pt-4 border-t border-[#F2EFE8] flex items-center gap-2 flex-wrap">
               <span className="text-xs font-semibold text-stone-500">Focus Areas:</span>
               {
-                e?.tags?.map((t, i) => (<span key={i} className="text-xs font-medium text-stone-600 bg-stone-100 px-2.5 py-1 rounded-lg">#{t}</span>))
+                eventsDetails?.tags?.map((t, i) => (<span key={i} className="text-xs font-medium text-stone-600 bg-stone-100 px-2.5 py-1 rounded-lg">#{t}</span>))
                 // <span className="text-xs font-medium text-stone-600 bg-stone-100 px-2.5 py-1 rounded-lg">#react</span>
               }
 
@@ -174,8 +186,8 @@ export default function EventDetailsPage() {
                 <Bookmark />
               </div>
               <div>
-                <p className="font-bold text-sm text-stone-900">{e?.venue}</p>
-                <p className="text-xs text-stone-600 mt-0.5">{e?.city}</p>
+                <p className="font-bold text-sm text-stone-900">{eventsDetails?.venue}</p>
+                <p className="text-xs text-stone-600 mt-0.5">{eventsDetails?.city}</p>
               </div>
             </div>
           </section>
@@ -185,8 +197,8 @@ export default function EventDetailsPage() {
             <h3 className="text-lg font-bold text-stone-900">Curated & Hosted by</h3>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <img
-                src={e?.organizer?.avatar}
-                alt={e?.organizer?.name}
+                src={eventsDetails?.organizer?.avatar}
+                alt={eventsDetails?.organizer?.name}
                 className="w-14 h-14 rounded-2xl object-cover border border-[#DDD9CE]"
               />
               <div className="space-y-1 flex-1">
@@ -196,7 +208,7 @@ export default function EventDetailsPage() {
                       to="/profile"
                       className="font-bold text-base text-stone-900 hover:text-[#E65100] transition-colors"
                     >
-                      {e?.organizer?.name}
+                      {eventsDetails?.organizer?.name}
                     </Link>
                     <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-stone-100 text-stone-700">
                       Organizer
@@ -210,10 +222,10 @@ export default function EventDetailsPage() {
                   </Link>
                 </div>
                 <p className="text-xs font-medium text-[#C2410C]">
-                  {e?.organizer?.organization}
+                  {eventsDetails?.organizer?.organization}
                 </p>
                 <p className="text-xs text-stone-600 leading-relaxed pt-1">
-                  {e?.organizer?.bio}
+                  {eventsDetails?.organizer?.bio}
                 </p>
               </div>
             </div>
@@ -233,13 +245,13 @@ export default function EventDetailsPage() {
                   Admission Pass
                 </span>
                 <div className="text-3xl font-extrabold text-stone-900 mt-0.5">
-                  {formatPrice(e?.price, e?.currency)}
+                  {formatPrice(eventsDetails?.price, eventsDetails?.currency)}
                 </div>
               </div>
 
               <div className="text-right">
                 <span className="text-xs font-semibold px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">
-                  {caluRemDay(e?.startDate)}
+                  {caluRemDay(eventsDetails?.startDate)}
                 </span>
               </div>
             </div>
@@ -251,18 +263,18 @@ export default function EventDetailsPage() {
                   <span><Users className="w-4 h-4" /></span> Capacity
                 </span>
                 <span className="font-bold text-stone-900">
-                  {` ${e?.registeredCount} of ${e?.capacity} seats filled`}
+                  {` ${eventsDetails?.registeredCount} of ${eventsDetails?.capacity} seats filled`}
                 </span>
               </div>
               <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#E65100] rounded-full transition-all" style={{
-                    width: `${Math.round((e?.registeredCount / e?.capacity) * 100)}%`
+                    width: `${Math.round((eventsDetails?.registeredCount / eventsDetails?.capacity) * 100)}%`
                   }}
                 />
               </div>
               <p className="text-[11px] text-stone-400 text-right">
-                {`${e?.capacity - e?.registeredCount} seats remaining`}
+                {`${eventsDetails?.capacity - eventsDetails?.registeredCount} seats remaining`}
               </p>
             </div>
 

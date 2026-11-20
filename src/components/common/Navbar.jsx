@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 function Navbar() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const favorites = useSelector((state) => state.favourites.items)
+  const favorites = useSelector((state) => state.favorites.items)
 
   console.log(favorites);
 

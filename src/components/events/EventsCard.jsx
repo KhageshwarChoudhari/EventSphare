@@ -1,9 +1,19 @@
 import { formatDate, formatPrice } from "@/lib/utils";
-import { toggleFavourites } from "@/store/slices/favoritesSlice";
+import { toggleFavorites } from "@/store/slices/favoritesSlice";
 import { Bookmark, Calendar } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+import { toast } from "sonner";
 
+export function handelFavorites(e, event, Dispatch, isFavorite) {
+  e.preventDefault();
+  Dispatch(toggleFavorites(event));
+  if (isFavorite) {
+    toast.info(`Removed "${event?.title}" from saved events`);
+  } else {
+    toast.success(`Saved "${event?.title}" to your collection!`);
+  }
+}
 
 export default function EventCard({ event }) {
   const {
@@ -20,12 +30,11 @@ export default function EventCard({ event }) {
 
 
   const Dispatch = useDispatch();
-
-  function handelFavorites(e) {
-    e.preventDefault();
-    Dispatch(toggleFavourites(event))
-  }
-
+  const isFavorite = useSelector((state) =>
+    state.favorites.items.some(
+      (e) => (e.id || e._id) === (event.id || event._id)
+    )
+  );
 
   return (
     <Link
@@ -47,11 +56,15 @@ export default function EventCard({ event }) {
             </span>
 
             <button
-              onClick={handelFavorites}
+              onClick={(e) => handelFavorites(e, event, Dispatch, isFavorite)}
               type="button"
               className="pointer-events-auto w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-black/5 flex items-center justify-center hover:bg-white hover:scale-110 active:scale-95 transition-all text-stone-700 hover:text-stone-900 cursor-pointer text-xs"
             >
-              <Bookmark />
+              <Bookmark
+                className={`w-4 h-4 transition-colors ${isFavorite
+                  ? "fill-[#E65100] text-[#E65100]"
+                  : "text-stone-600"
+                  }`} />
             </button>
           </div>
         </div>

@@ -25,16 +25,17 @@ export function formatTime(startDate, endDate) {
 
   const end = parseISO(endDate);
   const endTime = format(end, "hh:mm aa");
-  return (`${startTime} - ${endTime}`)
+  return `${startTime} - ${endTime}`;
 }
 
-export function caluRemDay(startDate){
-if(!startDate)return;
+export function caluRemDay(startDate) {
+  if (!startDate) return;
 
-const eventStDate = parseISO(startDate)
-const currDate = new Date();
-if( currDate > eventStDate)return ("Ended !") ;
+  const eventStDate = parseISO(startDate);
+  const currDate = new Date();
+  if (currDate > eventStDate) return "Ended !";
 
-return formatDistanceToNow(eventStDate , {addSuffix: true})
-
+  return formatDistanceToNow(eventStDate, { addSuffix: true });
 }
+
+
