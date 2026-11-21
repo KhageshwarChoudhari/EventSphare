@@ -7,6 +7,7 @@ import EventDetailsPage from "./pages/EventDetailsPage"
 import FavoritesPage from "./pages/FavoritesPage"
 import { Toaster } from "sonner"
 import { useEffect } from "react"
+import ExplorePage from "./pages/ExplorePage"
 
 
 function ScrollonTop() {
@@ -23,17 +24,18 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F5] text-stone-900 selection:bg-orange-100 selection:text-[#E65100]">
-      <ScrollonTop />
-      <Navbar />
+      <ScrollonTop/>
+      <Navbar/>
      <div className="flex-1">
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/favorites" element={<FavoritesPage/>} />
-        <Route path={`/events/:id`} element={<EventDetailsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/" element={<HomePage/>}/>
+        <Route path="/explore" element={<ExplorePage/>} />
+        <Route path="/favorites" element={<FavoritesPage/>}/>
+        <Route path={`/events/:id`} element={<EventDetailsPage/>} />
+        <Route path="*" element={<NotFoundPage/>}/>
       </Routes>
      </div>
-      <Footer />
+      <Footer/>
        <Toaster
         richColors
         toastOptions={{

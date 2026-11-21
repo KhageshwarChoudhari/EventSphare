@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
-import {clearAllFavorites} from "@/store/slices/favoritesSlice";
+import { clearAllFavorite } from "@/store/slices/favoritesSlice";
 import { toast } from "sonner";
 
 
@@ -30,7 +30,7 @@ export default function FavoritesPage() {
                     className="text-stone-500 hover:text-rose-600"
                     onClick={() => {
                         if (window.confirm("Clear all saved Bookmarks ? ")) {
-                            Dispatch(clearAllFavorites())
+                            Dispatch(clearAllFavorite())
                             toast.info("Saved collection cleared")
                         }
                     }}

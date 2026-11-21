@@ -103,10 +103,10 @@ export default function HomePage() {
   const [categories, setCategories] = useState([]);
   const [trendingEvents, setTrendingEvents] = useState([]);
 
-  useEffect(() => {
+
   async function loadHomepage(API) {
       try {
-        const data = await api.get(API);
+        const {data} = await api.get(API);
         if (API === featuredAPI) {
           setFeaturedEvents(data);
         } else if (API === categoriesAPI) {
@@ -120,6 +120,8 @@ export default function HomePage() {
         setIsLoading(false);
       }
     }
+  useEffect(() => {
+  
     loadHomepage(featuredAPI);
     loadHomepage(categoriesAPI);
     loadHomepage(spotlightAPI);

@@ -7,7 +7,7 @@ const favoritesSlice = createSlice({
   },
 
   reducers: {
-    toggleFavorites(state, action) {
+    toggleFavorite(state, action) {
       const event = action.payload;
       const exitingEvent = state.items.find(
         (e) => (e.id || e._id) === (event.id || event._id),
@@ -23,12 +23,12 @@ const favoritesSlice = createSlice({
       }
       localStorage.setItem("eventsphare-favorite", JSON.stringify(state.items));
     },
-    clearAllFavorites(state) {
+    clearAllFavorite(state) {
       state.items = [];
       localStorage.clear("eventsphare-favorite");
     },
   },
 });
 
-export const { toggleFavorites, clearAllFavorites } = favoritesSlice.actions;
+export const { toggleFavorite, clearAllFavorite } = favoritesSlice.actions;
 export default favoritesSlice.reducer;

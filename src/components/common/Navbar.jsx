@@ -8,10 +8,6 @@ function Navbar() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const favorites = useSelector((state) => state.favorites.items)
-
-  console.log(favorites);
-
-
   return (
     <div className="sticky top-0 z-40 w-full bg-[#FAF9F5]/90 backdrop-blur-md border-b border-[#EBE8DF]">
 
